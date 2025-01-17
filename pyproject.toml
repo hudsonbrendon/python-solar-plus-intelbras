@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "solar_plus_intelbras"
+version = "0.1.0"
+description = "A wrapper for api solar plus intelbras"
+authors = ["Hudson Brendon <contato.hudsonbrendon@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.2"
+pre-commit = "^3.6.2"
+pytest = "^8.0.1"
+pytest-sugar = "^1.0.0"
+pytest-cov = "^4.1.0"
+pytest-xdist = "^3.5.0"
+coverage = "^7.4.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
