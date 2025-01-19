@@ -1,8 +1,6 @@
 import requests
 from pydantic import EmailStr
 
-from solar_plus_intelbras.enums import EndpointEnum, MethodEnum
-
 
 class SolarPlusIntelbras:
     """A class to represent a SolarPlusIntelbras.
@@ -50,6 +48,10 @@ class SolarPlusIntelbras:
         """
         return self.__BASE_API_URL
 
+    @property
+    def token(self) -> str:
+        return self._login()["accessToken"]["accessJWT"]
+
     def __str__(self) -> str:
         """Return a string representation of the object.
 
@@ -66,18 +68,11 @@ class SolarPlusIntelbras:
         """
         return self.__str__()
 
-    def _request(self, method: MethodEnum, endpoint: EndpointEnum) -> dict:
-        """A private method to make a request to the API.
-
-        Args:
-            method (MethodEnum): A method from the MethodEnum.
-            endpoint (EndpointEnum): A endpoint from the EndpointEnum.
-
-        Returns:
-            dict: A response from the API.
-        """
-        response = requests.request(
-            method.value, f"{self.base_api_url}{endpoint.value}"
-        )
-        response.raise_for_status()
-        return response.json()
+    def _login(self) -> dict:
+        return requests.post(
+            self.base_api_url + "login",
+            json={
+                "email": self.email,
+            },
+            headers={"plus": self.plus},
+        ).json()
