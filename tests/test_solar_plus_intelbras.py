@@ -1,4 +1,7 @@
+from datetime import datetime, timezone
+
 import pytest
+from requests_mock import Mocker
 
 from solar_plus_intelbras.solar_plus_intelbras import SolarPlusIntelbras
 
@@ -80,3 +83,62 @@ class TestSolarPlusIntelbras:
         )
         with pytest.raises(KeyError):
             solar_plus_intelbras.token
+
+    def test_should_return_true_solar_plus_intelbras_is_token_not_defined(
+        self, solar_plus_intelbras: SolarPlusIntelbras
+    ) -> None:
+        assert solar_plus_intelbras._is_token_expired() is True
+
+    @pytest.mark.freeze_time("2025-01-01 00:00:00")
+    def test_should_return_true_solar_plus_intelbras_is_token_and_datetime_now_equals(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        login_response: dict,
+    ) -> None:
+        login_response["accessToken"]["exp"] = int(
+            datetime.now(timezone.utc).timestamp()
+        )
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+        solar_plus_intelbras._login()
+        assert solar_plus_intelbras._is_token_expired() is True
+
+    @pytest.mark.freeze_time("2025-01-01 00:00:00")
+    def test_should_return_true_solar_plus_intelbras_is_token_expired(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        login_response: dict,
+    ) -> None:
+        login_response["accessToken"]["exp"] = int(
+            datetime.now(timezone.utc).timestamp() - 1
+        )
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+        solar_plus_intelbras._login()
+        assert solar_plus_intelbras._is_token_expired() is True
+
+    @pytest.mark.freeze_time("2025-01-01 00:00:00")
+    def test_should_return_false_solar_plus_intelbras_is_token_not_expired(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        login_response: dict,
+    ) -> None:
+        login_response["accessToken"]["exp"] = int(
+            datetime.now(timezone.utc).timestamp() + 1
+        )
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+        solar_plus_intelbras._login()
+        assert solar_plus_intelbras._is_token_expired() is False
