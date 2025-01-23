@@ -112,3 +112,15 @@ class SolarPlusIntelbras:
             self._token_expiration = datetime.now(timezone.utc)
 
         return data
+
+    def plants(self) -> dict:
+        """Return the plants.
+
+        Returns:
+            dict: A dictionary with the plants.
+        """
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+        )
+        return response.json()
