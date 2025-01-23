@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from unittest.mock import patch
 
 import pytest
 from requests_mock import Mocker
@@ -142,3 +143,31 @@ class TestSolarPlusIntelbras:
         )
         solar_plus_intelbras._login()
         assert solar_plus_intelbras._is_token_expired() is False
+
+    def test_token_expired(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with patch.object(
+            solar_plus_intelbras, "_is_token_expired"
+        ) as mock_is_token_expired:
+            mock_is_token_expired.return_value = True
+            with patch.object(solar_plus_intelbras, "_login") as mock_login:
+                solar_plus_intelbras.token
+                mock_login.assert_called_once()
+
+    @pytest.mark.freeze_time("2025-01-01 00:00:00")
+    def test_login_without_exp(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        login_response: dict,
+        requests_mock: Mocker,
+    ) -> None:
+        login_response["accessToken"].pop("exp")
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+        solar_plus_intelbras._login()
+        assert solar_plus_intelbras._token_expiration == datetime.now(timezone.utc)
