@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 from requests_mock import Mocker
 
-from solar_plus_intelbras.enums import PeriodEnum
+from solar_plus_intelbras.enums import KeyEnum, PeriodEnum
 from solar_plus_intelbras.solar_plus_intelbras import SolarPlusIntelbras
 
 
@@ -204,7 +204,7 @@ class TestSolarPlusIntelbrasPlants:
 
 
 class TestSolarPlusIntelbrasRecords:
-    def test_should_retun_records_today(
+    def test_should_return_records_today(
         self,
         requests_mock: Mocker,
         solar_plus_intelbras: SolarPlusIntelbras,
@@ -225,9 +225,33 @@ class TestSolarPlusIntelbrasRecords:
         assert (
             solar_plus_intelbras.records(
                 period=PeriodEnum.DAY.value,
-                key="pac",
+                key=KeyEnum.PAC.value,
                 start_date="2025-01-23",
                 end_date="2025-01-23",
             )
             == records_today
         )
+
+    def test_shouldnt_return_records_with_start_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records(
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                start_date="2025-01-23",
+            )
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_records_with_end_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records(
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                end_date="2025-01-23",
+            )
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."

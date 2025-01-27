@@ -4,7 +4,7 @@ from typing import Optional
 import requests
 from pydantic import EmailStr
 
-from solar_plus_intelbras.enums import EndpointEnum, PeriodEnum
+from solar_plus_intelbras.enums import EndpointEnum, KeyEnum, PeriodEnum
 
 
 class SolarPlusIntelbras:
@@ -132,7 +132,7 @@ class SolarPlusIntelbras:
     def records(
         self,
         period: PeriodEnum,
-        key: Optional[str] = None,
+        key: Optional[KeyEnum] = None,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
     ) -> dict:
@@ -140,7 +140,7 @@ class SolarPlusIntelbras:
 
         Args:
             period (PeriodEnum): A period.
-            key (Optional[str], optional): A key. Defaults to None.
+            key (Optional[KeyEnum], optional): A key. Defaults to None.
             start_date (Optional[str], optional): A start date. Defaults to None.
             end_date (Optional[str], optional): An end date. Defaults to None.
 
@@ -156,10 +156,18 @@ class SolarPlusIntelbras:
             params["key"] = key
 
         if start_date:
-            params["start_date"] = start_date
+            try:
+                datetime.strptime(start_date, "%Y-%m-%d")
+                params["start_date"] = start_date
+            except ValueError:
+                raise ValueError("start_date must be in the format YYYY-MM-DD.")
 
         if end_date:
-            params["end_date"] = end_date
+            try:
+                datetime.strptime(end_date, "%Y-%m-%d")
+                params["end_date"] = end_date
+            except ValueError:
+                raise ValueError("end_date must be in the format YYYY-MM-DD.")
 
         response = requests.get(
             f"{self.base_api_url}{EndpointEnum.RECORDS.value}",

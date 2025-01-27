@@ -23,3 +23,14 @@ class PeriodEnum(Enum):
     DAY = "day"
     MONTH = "month"
     YEAR = "year"
+
+
+class KeyEnum(Enum):
+    """A enum with the keys available in the API.
+
+    Args:
+        Enum (_type_): A class to represent a enumeration.
+    """
+
+    PAC = "pac"
+    ENERGY_TODAY = "energy_today"
