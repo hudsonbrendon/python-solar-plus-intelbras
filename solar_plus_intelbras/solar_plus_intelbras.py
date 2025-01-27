@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
+from typing import Optional
 
 import requests
 from pydantic import EmailStr
 
-from solar_plus_intelbras.enums import EndpointEnum
+from solar_plus_intelbras.enums import EndpointEnum, KeyEnum, PeriodEnum
 
 
 class SolarPlusIntelbras:
@@ -17,6 +18,9 @@ class SolarPlusIntelbras:
         Args:
             email (EmailStr): A valid email address.
             plus (str): A string.
+
+        Returns:
+            None: The constructor does not return anything.
         """
         self.__email = email
         self.__plus = plus
@@ -122,5 +126,52 @@ class SolarPlusIntelbras:
         response = requests.get(
             f"{self.base_api_url}{EndpointEnum.PLANTS.value}",
             headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+        )
+        return response.json()
+
+    def records(
+        self,
+        period: PeriodEnum,
+        key: Optional[KeyEnum] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+    ) -> dict:
+        """Return the records.
+
+        Args:
+            period (PeriodEnum): A period.
+            key (Optional[KeyEnum], optional): A key. Defaults to None.
+            start_date (Optional[str], optional): A start date. Defaults to None.
+            end_date (Optional[str], optional): An end date. Defaults to None.
+
+        Returns:
+            dict: A dictionary with the records.
+        """
+        params = {}
+
+        if period:
+            params["period"] = period
+
+        if key:
+            params["key"] = key
+
+        if start_date:
+            try:
+                datetime.strptime(start_date, "%Y-%m-%d")
+                params["start_date"] = start_date
+            except ValueError:
+                raise ValueError("start_date must be in the format YYYY-MM-DD.")
+
+        if end_date:
+            try:
+                datetime.strptime(end_date, "%Y-%m-%d")
+                params["end_date"] = end_date
+            except ValueError:
+                raise ValueError("end_date must be in the format YYYY-MM-DD.")
+
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.RECORDS.value}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+            params=params,
         )
         return response.json()

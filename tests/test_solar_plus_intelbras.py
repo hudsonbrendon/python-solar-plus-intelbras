@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 from requests_mock import Mocker
 
+from solar_plus_intelbras.enums import KeyEnum, PeriodEnum
 from solar_plus_intelbras.solar_plus_intelbras import SolarPlusIntelbras
 
 
@@ -200,3 +201,57 @@ class TestSolarPlusIntelbrasPlants:
     ) -> None:
         with pytest.raises(Exception):
             solar_plus_intelbras.plants()
+
+
+class TestSolarPlusIntelbrasRecords:
+    def test_should_return_records_today(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        records_today: dict,
+        login_response: dict,
+    ) -> None:
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+
+        requests_mock.get(
+            "https://ens-server.intelbras.com.br/api/records",
+            json=records_today,
+            status_code=200,
+        )
+        assert (
+            solar_plus_intelbras.records(
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                start_date="2025-01-23",
+                end_date="2025-01-23",
+            )
+            == records_today
+        )
+
+    def test_shouldnt_return_records_with_start_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records(
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                start_date="2025-01-23",
+            )
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_records_with_end_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records(
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                end_date="2025-01-23",
+            )
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
