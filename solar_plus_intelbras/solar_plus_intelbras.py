@@ -12,7 +12,11 @@ class SolarPlusIntelbras:
 
     __BASE_API_URL = "https://ens-server.intelbras.com.br/api/"
 
-    def __init__(self, email: EmailStr, plus: str) -> None:
+    def __init__(
+        self,
+        email: EmailStr,
+        plus: str,
+    ) -> None:
         """Construct a SolarPlusIntelbras object.
 
         Args:
@@ -131,6 +135,7 @@ class SolarPlusIntelbras:
 
     def records(
         self,
+        plant_id: int,
         period: PeriodEnum,
         key: Optional[KeyEnum] = None,
         start_date: Optional[str] = None,
@@ -139,6 +144,7 @@ class SolarPlusIntelbras:
         """Return the records.
 
         Args:
+            plant_id (int): A plant id.
             period (PeriodEnum): A period.
             key (Optional[KeyEnum], optional): A key. Defaults to None.
             start_date (Optional[str], optional): A start date. Defaults to None.
@@ -170,7 +176,7 @@ class SolarPlusIntelbras:
                 raise ValueError("end_date must be in the format YYYY-MM-DD.")
 
         response = requests.get(
-            f"{self.base_api_url}{EndpointEnum.RECORDS.value}",
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}/{EndpointEnum.RECORDS.value}",
             headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
             params=params,
         )
@@ -179,25 +185,55 @@ class SolarPlusIntelbras:
     def records_year(
         self,
         year: int,
+        plant_id: int,
     ) -> dict:
         """Return the records of a year.
 
         Args:
             year (int): A year.
+            plant_id (int): A plant id.
 
         Returns:
             dict: A dictionary with the records.
         """
-        params = {}
-
-        params["period"] = PeriodEnum.YEAR.value
-        params["key"] = KeyEnum.ENERGY_TODAY.value
-
-        if year:
-            params["year"] = year
+        params = {
+            "key": KeyEnum.ENERGY_TODAY.value,
+            "year": year,
+            "period": PeriodEnum.YEAR.value,
+        }
 
         response = requests.get(
-            f"{self.base_api_url}{EndpointEnum.RECORDS_YEAR.value}",
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}/{EndpointEnum.RECORDS_YEAR.value}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+            params=params,
+        )
+        return response.json()
+
+    def records_years(
+        self,
+        start_year: int,
+        end_year: int,
+        plant_id: int,
+    ) -> dict:
+        """Return the records of a year.
+
+        Args:
+            start_year (int): A year.
+            end_year (int): A year.
+            plant_id (int): A plant id.
+
+        Returns:
+            dict: A dictionary with the records.
+        """
+
+        params = {
+            "start_year": start_year,
+            "end_year": end_year,
+            "key": KeyEnum.ENERGY_TODAY.value,
+        }
+
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}/{EndpointEnum.RECORDS_YEARS.value}",
             headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
             params=params,
         )
