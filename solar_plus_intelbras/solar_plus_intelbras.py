@@ -175,3 +175,30 @@ class SolarPlusIntelbras:
             params=params,
         )
         return response.json()
+
+    def records_year(
+        self,
+        year: int,
+    ) -> dict:
+        """Return the records of a year.
+
+        Args:
+            year (int): A year.
+
+        Returns:
+            dict: A dictionary with the records.
+        """
+        params = {}
+
+        params["period"] = PeriodEnum.YEAR.value
+        params["key"] = KeyEnum.ENERGY_TODAY.value
+
+        if year:
+            params["year"] = year
+
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.RECORDS_YEAR.value}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+            params=params,
+        )
+        return response.json()

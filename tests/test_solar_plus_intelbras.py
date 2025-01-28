@@ -255,3 +255,54 @@ class TestSolarPlusIntelbrasRecords:
                 end_date="2025-01-23",
             )
             assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
+
+
+class TestSolarPlusIntelbrasRecordsYear:
+    def test_should_return_records_year(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        records_year: dict,
+        login_response: dict,
+    ) -> None:
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+
+        requests_mock.get(
+            "https://ens-server.intelbras.com.br/api/records/year?period=year&year=2025&key=energy_today",
+            json=records_year,
+            status_code=200,
+        )
+        assert (
+            solar_plus_intelbras.records_year(
+                year=2025,
+            )
+            == records_year
+        )
+
+    def test_shouldnt_return_records_year_without_year(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records_year()
+            assert str(exc.value) == "year must be an integer."
+
+    def test_shouldnt_return_records_year_string(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records_year(year="2025")
+            assert str(exc.value) == "year must be an integer."
+
+    def test_shouldnt_return_records_year_float(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records_year(year=2025.0)
+            assert str(exc.value) == "year must be an integer."

@@ -11,6 +11,7 @@ class EndpointEnum(Enum):
     LOGIN = "login"
     PLANTS = "plants"
     RECORDS = "records"
+    RECORDS_YEAR = "records/year"
 
 
 class PeriodEnum(Enum):
