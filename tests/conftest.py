@@ -362,6 +362,30 @@ def records_today() -> dict:
 
 
 @pytest.fixture
+def records_years() -> dict:
+    return {
+        "data": {
+            "rows": [
+                {"year": "2025", "month": "1", "total": 292.4},
+                {"year": "2025", "month": "2", "total": 0},
+                {"year": "2025", "month": "3", "total": 0},
+                {"year": "2025", "month": "4", "total": 0},
+                {"year": "2025", "month": "5", "total": 0},
+                {"year": "2025", "month": "6", "total": 0},
+                {"year": "2025", "month": "7", "total": 0},
+                {"year": "2025", "month": "8", "total": 0},
+                {"year": "2025", "month": "9", "total": 0},
+                {"year": "2025", "month": "10", "total": 0},
+                {"year": "2025", "month": "11", "total": 0},
+                {"year": "2025", "month": "12", "total": 0},
+            ],
+            "total": 292.4,
+        },
+        "status": 200,
+    }
+
+
+@pytest.fixture
 def records_year() -> dict:
     return {
         "data": {
