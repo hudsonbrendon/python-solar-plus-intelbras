@@ -133,6 +133,21 @@ class SolarPlusIntelbras:
         )
         return response.json()
 
+    def plants_detail(self, plant_id: int) -> dict:
+        """Return the plant.
+
+        Args:
+            plant_id (int): A plant id.
+
+        Returns:
+            dict: A dictionary with the plants.
+        """
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+        )
+        return response.json()
+
     def records(
         self,
         plant_id: int,

@@ -203,6 +203,53 @@ class TestSolarPlusIntelbrasPlants:
             solar_plus_intelbras.plants()
 
 
+class TestSolarPlusIntelbrasPlantsDetail:
+    def test_should_return_plants_detail(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        plants_detail: dict,
+        login_response: dict,
+    ) -> None:
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+
+        requests_mock.get(
+            "https://ens-server.intelbras.com.br/api/plants/1",
+            json=plants_detail,
+            status_code=200,
+        )
+        assert isinstance(solar_plus_intelbras.plants_detail(plant_id=1), dict)
+        assert solar_plus_intelbras.plants_detail(plant_id=1) == plants_detail
+
+    def test_shouldnt_return_plants_detail_without_authentication(
+        self, solar_plus_intelbras: SolarPlusIntelbras
+    ) -> None:
+        with pytest.raises(Exception):
+            solar_plus_intelbras.plants_detail(plant_id=1)
+
+    def test_shouldnt_return_plants_detail_without_plant_id(
+        self, solar_plus_intelbras: SolarPlusIntelbras
+    ) -> None:
+        with pytest.raises(Exception):
+            solar_plus_intelbras.plants_detail()
+
+    def test_shouldnt_return_plants_detail_string(
+        self, solar_plus_intelbras: SolarPlusIntelbras
+    ) -> None:
+        with pytest.raises(Exception):
+            solar_plus_intelbras.plants_detail(plant_id="1")
+
+    def test_shouldnt_return_plants_detail_float(
+        self, solar_plus_intelbras: SolarPlusIntelbras
+    ) -> None:
+        with pytest.raises(Exception):
+            solar_plus_intelbras.plants_detail(plant_id=1.0)
+
+
 class TestSolarPlusIntelbrasRecords:
     def test_should_return_records_today(
         self,
