@@ -623,3 +623,170 @@ class TestSolarPlusIntelbrasInverters:
         with pytest.raises(Exception) as exc:
             solar_plus_intelbras.inverters(plant_id=1, limit=20, page=1.0)
             assert str(exc.value) == "page must be an integer."
+
+
+class TestSolarPlusIntelbrasAlerts:
+    def test_should_return_alerts(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        alerts: dict,
+        login_response: dict,
+    ) -> None:
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+
+        requests_mock.get(
+            "https://ens-server.intelbras.com.br/api/plants/1/alerts?start_date=2025-01-23&end_date=2025-01-23&limit=20&page=1",
+            json=alerts,
+            status_code=200,
+        )
+        assert (
+            solar_plus_intelbras.alerts(
+                plant_id=1,
+                start_date="2025-01-23",
+                end_date="2025-01-23",
+                limit=20,
+                page=1,
+            )
+            == alerts
+        )
+
+    def test_shouldnt_return_alerts_without_plant_id(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts()
+            assert str(exc.value) == "plant_id must be an integer."
+
+    def test_shouldnt_return_alerts_string_plant_id(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(plant_id="1")
+            assert str(exc.value) == "plant_id must be an integer."
+
+    def test_shouldnt_return_alerts_float_plant_id(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(plant_id=1.0)
+            assert str(exc.value) == "plant_id must be an integer."
+
+    def test_shouldnt_return_alerts_without_start_date(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(plant_id=1)
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_alerts_without_end_date(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(plant_id=1, start_date="2025-01-23")
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_alerts_without_limit(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1, start_date="2025-01-23", end_date="2025-01-23"
+            )
+            assert str(exc.value) == "limit must be an integer."
+
+    def test_shouldnt_return_alerts_string_limit(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1, start_date="2025-01-23", end_date="2025-01-23", limit="20"
+            )
+            assert str(exc.value) == "limit must be an integer."
+
+    def test_shouldnt_return_alerts_float_limit(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1, start_date="2025-01-23", end_date="2025-01-23", limit=20.0
+            )
+            assert str(exc.value) == "limit must be an integer."
+
+    def test_shouldnt_return_alerts_without_page(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1, start_date="2025-01-23", end_date="2025-01-23", limit=20
+            )
+            assert str(exc.value) == "page must be an integer."
+
+    def test_shouldnt_return_alerts_string_page(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1,
+                start_date="2025-01-23",
+                end_date="2025-01-23",
+                limit=20,
+                page="1",
+            )
+            assert str(exc.value) == "page must be an integer."
+
+    def test_shouldnt_return_alerts_float_page(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1,
+                start_date="2025-01-23",
+                end_date="2025-01-23",
+                limit=20,
+                page=1.0,
+            )
+            assert str(exc.value) == "page must be an integer."
+
+    def test_shouldnt_return_alerts_with_start_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1,
+                start_date="2025/01/23",
+                end_date="2025-01-23",
+                limit=20,
+                page=1,
+            )
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_alerts_with_end_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.alerts(
+                plant_id=1,
+                start_date="2025-01-23",
+                end_date="2025/01/23",
+                limit=20,
+                page=1,
+            )
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
