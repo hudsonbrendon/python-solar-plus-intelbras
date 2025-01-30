@@ -253,3 +253,22 @@ class SolarPlusIntelbras:
             params=params,
         )
         return response.json()
+
+    def inverters(self, plant_id: int, limit: int = 20, page: int = 1) -> dict:
+        """Return the inverters.
+
+        Args:
+            limit (int): A limit.
+            page (int): A page.
+
+        Returns:
+            dict: A dictionary with the inverters.
+        """
+        params = {"limit": limit, "page": page}
+
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}/{EndpointEnum.INVERTERS.value}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+            params=params,
+        )
+        return response.json()
