@@ -306,6 +306,34 @@ class TestSolarPlusIntelbrasRecords:
             )
             assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
 
+    def test_shouldnt_return_records_with_start_date_invalid_format(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records(
+                plant_id=1,
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                start_date="2025/01/23",
+                end_date="2025-01-23",
+            )
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_records_with_end_date_invalid_format(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.records(
+                plant_id=1,
+                period=PeriodEnum.DAY.value,
+                key=KeyEnum.PAC.value,
+                start_date="2025-01-23",
+                end_date="2025/01/23",
+            )
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
+
 
 class TestSolarPlusIntelbrasRecordsYear:
     def test_should_return_records_year(
@@ -494,3 +522,104 @@ class TestSolarPlusIntelbrasRecordsYears:
                 start_year=2020, end_year=2025, plant_id=1.0
             )
             assert str(exc.value) == "plant_id must be an integer."
+
+
+class TestSolarPlusIntelbrasInverters:
+    def test_should_return_inverters(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        inverters: dict,
+        login_response: dict,
+    ) -> None:
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+
+        requests_mock.get(
+            "https://ens-server.intelbras.com.br/api/plants/1/inverters?limit=20&page=1",
+            json=inverters,
+            status_code=200,
+        )
+        assert (
+            solar_plus_intelbras.inverters(
+                plant_id=1,
+                limit=20,
+                page=1,
+            )
+            == inverters
+        )
+
+    def test_shouldnt_return_inverters_without_plant_id(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters()
+            assert str(exc.value) == "plant_id must be an integer."
+
+    def test_shouldnt_return_inverters_string_plant_id(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id="1")
+            assert str(exc.value) == "plant_id must be an integer."
+
+    def test_shouldnt_return_inverters_float_plant_id(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1.0)
+            assert str(exc.value) == "plant_id must be an integer."
+
+    def test_shouldnt_return_inverters_without_limit(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1)
+            assert str(exc.value) == "limit must be an integer."
+
+    def test_shouldnt_return_inverters_string_limit(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1, limit="20")
+            assert str(exc.value) == "limit must be an integer."
+
+    def test_shouldnt_return_inverters_float_limit(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1, limit=20.0)
+            assert str(exc.value) == "limit must be an integer."
+
+    def test_shouldnt_return_inverters_without_page(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1, limit=20)
+            assert str(exc.value) == "page must be an integer."
+
+    def test_shouldnt_return_inverters_string_page(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1, limit=20, page="1")
+            assert str(exc.value) == "page must be an integer."
+
+    def test_shouldnt_return_inverters_float_page(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.inverters(plant_id=1, limit=20, page=1.0)
+            assert str(exc.value) == "page must be an integer."

@@ -13,6 +13,7 @@ class EndpointEnum(Enum):
     RECORDS = "records"
     RECORDS_YEAR = "records/year"
     RECORDS_YEARS = "records/years"
+    INVERTERS = "inverters"
 
 
 class PeriodEnum(Enum):
