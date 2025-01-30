@@ -272,3 +272,49 @@ class SolarPlusIntelbras:
             params=params,
         )
         return response.json()
+
+    def alerts(
+        self,
+        plant_id: int,
+        start_date: str,
+        end_date: str,
+        limit: int = 20,
+        page: int = 1,
+    ) -> dict:
+        """Return the alerts.
+
+        Args:
+            plant_id (int): A plant id.
+            start_date (str): A start date.
+            end_date (str): An end date.
+            limit (int, optional): A limit. Defaults to 20.
+            page (int, optional): A page. Defaults to 1.
+
+        Returns:
+            dict: A dictionary with the alerts.
+        """
+        params = {
+            "limit": limit,
+            "page": page,
+        }
+
+        if start_date:
+            try:
+                datetime.strptime(start_date, "%Y-%m-%d")
+                params["start_date"] = start_date
+            except ValueError:
+                raise ValueError("start_date must be in the format YYYY-MM-DD.")
+
+        if end_date:
+            try:
+                datetime.strptime(end_date, "%Y-%m-%d")
+                params["end_date"] = end_date
+            except ValueError:
+                raise ValueError("end_date must be in the format YYYY-MM-DD.")
+
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}/alerts",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+            params=params,
+        )
+        return response.json()

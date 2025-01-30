@@ -913,3 +913,16 @@ def inverters() -> dict:
             }
         ],
     }
+
+
+@pytest.fixture
+def alerts() -> dict:
+    return {
+        "limit": 20,
+        "page": 1,
+        "sort": "",
+        "total_rows": 5,
+        "total_rows_in_this_page": 0,
+        "total_pages": 0,
+        "rows": [],
+    }
