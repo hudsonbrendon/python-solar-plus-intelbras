@@ -14,6 +14,8 @@ class EndpointEnum(Enum):
     RECORDS_YEAR = "records/year"
     RECORDS_YEARS = "records/years"
     INVERTERS = "inverters"
+    USER = "user"
+    NOTIFICATIONS = "notifications"
 
 
 class PeriodEnum(Enum):

@@ -318,3 +318,47 @@ class SolarPlusIntelbras:
             params=params,
         )
         return response.json()
+
+    def notifications(
+        self,
+        start_date: str,
+        end_date: str,
+        pendings: bool = True,
+        page: int = 1,
+    ) -> dict:
+        """Return the notifications.
+
+        Args:
+            start_date (str): A start date.
+            end_date (str): An end date.
+            pendings (bool, optional): A boolean. Defaults to True.
+            page (int, optional): A page. Defaults to 1.
+
+        Returns:
+            dict: A dictionary with the notifications.
+        """
+        params = {
+            "pendings": pendings,
+            "page": page,
+        }
+
+        if start_date:
+            try:
+                datetime.strptime(start_date, "%Y-%m-%d")
+                params["start_date"] = start_date
+            except ValueError:
+                raise ValueError("start_date must be in the format YYYY-MM-DD.")
+
+        if end_date:
+            try:
+                datetime.strptime(end_date, "%Y-%m-%d")
+                params["end_date"] = end_date
+            except ValueError:
+                raise ValueError("end_date must be in the format YYYY-MM-DD.")
+
+        response = requests.get(
+            f"{self.base_api_url}{EndpointEnum.USER.value}/{EndpointEnum.NOTIFICATIONS.value}",
+            headers={"Authorization": f"Bearer {self.token}", "plus": self.plus},
+            params=params,
+        )
+        return response.json()

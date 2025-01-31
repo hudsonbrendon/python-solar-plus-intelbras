@@ -790,3 +790,69 @@ class TestSolarPlusIntelbrasAlerts:
                 page=1,
             )
             assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
+
+
+class TestSolarPlusIntelbrasNotifications:
+    def test_should_return_notifications(
+        self,
+        requests_mock: Mocker,
+        solar_plus_intelbras: SolarPlusIntelbras,
+        notifications: dict,
+        login_response: dict,
+    ) -> None:
+        requests_mock.post(
+            "https://ens-server.intelbras.com.br/api/login",
+            json=login_response,
+            status_code=200,
+        )
+
+        requests_mock.get(
+            "https://ens-server.intelbras.com.br/api/user/notifications?pendings=True&page=1&start_date=2025-01-23&end_date=2025-01-23",
+            json=notifications,
+            status_code=200,
+        )
+        assert (
+            solar_plus_intelbras.notifications(
+                start_date="2025-01-23",
+                end_date="2025-01-23",
+                pendings=True,
+                page=1,
+            )
+            == notifications
+        )
+
+    def test_shouldnt_return_notifications_without_start_date(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.notifications()
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_notifications_with_start_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.notifications(
+                start_date="2025/01/23", end_date="2025-01-23"
+            )
+            assert str(exc.value) == "start_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_notifications_without_end_date(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.notifications(start_date="2025-01-23")
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
+
+    def test_shouldnt_return_notifications_with_end_date_invalid(
+        self,
+        solar_plus_intelbras: SolarPlusIntelbras,
+    ) -> None:
+        with pytest.raises(Exception) as exc:
+            solar_plus_intelbras.notifications(
+                start_date="2025-01-23", end_date="2025/01/23"
+            )
+            assert str(exc.value) == "end_date must be in the format YYYY-MM-DD."
