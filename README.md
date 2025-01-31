@@ -8,9 +8,6 @@
 A wrapper for api solar plus intelbras
 
 
-[![Solar Plus Intelbras](https://solarplus.intelbras.com.br/assets/Intelbras_solar_branco.c8061084.png)](https://hudsonbrendon.github.io/python-solar-plus-intelbras/)
-
-
 Install using pip:
 
 
