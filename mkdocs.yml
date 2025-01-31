@@ -23,6 +23,10 @@ markdown_extensions:
   - pymdownx.tabbed
   - pymdownx.snippets
 
-
 plugins:
-- search
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true  # Para ocultar os links do código-fonte
