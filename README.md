@@ -36,7 +36,7 @@ Python Solar Plus Intelbras supports the main endpoints of the Intelbras API:
 
 ## Documentation
 
-Project documentation is available at [https://hudsonbrendon.github.io/python-solar-plus-intelbras//](https://hudsonbrendon.github.io/python-solar-plus-intelbras/).
+Project documentation is available at [https://hudsonbrendon.github.io/python-solar-plus-intelbras/](https://hudsonbrendon.github.io/python-solar-plus-intelbras/).
 
 ## Contribute
 
