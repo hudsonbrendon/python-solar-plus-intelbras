@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "solar_plus_intelbras"
+name = "solar-plus-intelbras"
 version = "0.1.0"
 description = "A wrapper for api solar plus intelbras"
 authors = ["Hudson Brendon <contato.hudsonbrendon@gmail.com>"]

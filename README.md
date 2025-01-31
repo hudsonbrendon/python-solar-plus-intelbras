@@ -12,7 +12,7 @@ Install using pip:
 
 
 ```shell
-pip install solar_plus_intelbras
+pip install solar-plus-intelbras
 ```
 
 Now, let's get started:
