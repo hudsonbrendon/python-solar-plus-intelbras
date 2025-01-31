@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-from typing import Optional
 
 import requests
 from pydantic import EmailStr
@@ -152,43 +151,38 @@ class SolarPlusIntelbras:
         self,
         plant_id: int,
         period: PeriodEnum,
-        key: Optional[KeyEnum] = None,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        key: KeyEnum,
+        start_date: str,
+        end_date: str,
     ) -> dict:
         """Return the records.
 
         Args:
             plant_id (int): A plant id.
             period (PeriodEnum): A period.
-            key (Optional[KeyEnum], optional): A key. Defaults to None.
-            start_date (Optional[str], optional): A start date. Defaults to None.
-            end_date (Optional[str], optional): An end date. Defaults to None.
+            key (KeyEnum): A key.
+            start_date (str): A start date.
+            end_date (str): An end date.
 
         Returns:
             dict: A dictionary with the records.
         """
-        params = {}
+        params = {
+            "period": period,
+            "key": key,
+        }
 
-        if period:
-            params["period"] = period
+        try:
+            datetime.strptime(start_date, "%Y-%m-%d")
+            params["start_date"] = start_date
+        except ValueError:
+            raise ValueError("start_date must be in the format YYYY-MM-DD.")
 
-        if key:
-            params["key"] = key
-
-        if start_date:
-            try:
-                datetime.strptime(start_date, "%Y-%m-%d")
-                params["start_date"] = start_date
-            except ValueError:
-                raise ValueError("start_date must be in the format YYYY-MM-DD.")
-
-        if end_date:
-            try:
-                datetime.strptime(end_date, "%Y-%m-%d")
-                params["end_date"] = end_date
-            except ValueError:
-                raise ValueError("end_date must be in the format YYYY-MM-DD.")
+        try:
+            datetime.strptime(end_date, "%Y-%m-%d")
+            params["end_date"] = end_date
+        except ValueError:
+            raise ValueError("end_date must be in the format YYYY-MM-DD.")
 
         response = requests.get(
             f"{self.base_api_url}{EndpointEnum.PLANTS.value}/{plant_id}/{EndpointEnum.RECORDS.value}",
