@@ -926,3 +926,16 @@ def alerts() -> dict:
         "total_pages": 0,
         "rows": [],
     }
+
+
+@pytest.fixture
+def notifications() -> dict:
+    return {
+        "limit": 10,
+        "page": 1,
+        "sort": "",
+        "total_rows": 0,
+        "total_rows_in_this_page": 0,
+        "total_pages": 0,
+        "rows": [],
+    }
