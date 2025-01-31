@@ -1,0 +1,32 @@
+site_name: Python Solar Plus Intelbras
+
+theme:
+  name: "material"
+  palette:
+    primary: "green"
+    accent: "light green"
+  font:
+    text: "Roboto"
+    code: "Fire Code"
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.tasklist
+  - pymdownx.tilde
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.highlight
+  - pymdownx.caret
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.snippets
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true  # Para ocultar os links do código-fonte

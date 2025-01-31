@@ -21,6 +21,11 @@ pytest-xdist = "^3.6.1"
 coverage = "^7.4.2"
 pytest-lazy-fixture = "^0.6.3"
 pytest-freezegun = "^0.4.2"
+mkdocs = "^1.6.1"
+mkdocs-material = "^9.6.1"
+pymdown-extensions = "^10.14.2"
+mkdocstrings = "^0.27.0"
+mkdocstrings-python = "^1.13.0"
 
 [build-system]
 requires = ["poetry-core"]
