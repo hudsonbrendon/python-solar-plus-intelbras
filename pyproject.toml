@@ -24,7 +24,7 @@ pytest-freezegun = "^0.4.2"
 mkdocs = "^1.6.1"
 mkdocs-material = "^9.6.1"
 pymdown-extensions = "^10.14.2"
-mkdocstrings = ">=0.27,<0.31"
+mkdocstrings = ">=0.27,<1.1"
 mkdocstrings-python = "^1.13.0"
 python-decouple = "^3.8"
 
